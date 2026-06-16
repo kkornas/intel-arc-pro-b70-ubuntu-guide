@@ -8,7 +8,7 @@ This is the necessary configuration for the Ollama workload [docs/workloads/olla
 
 --- 
 
-# 1. Prerequisites
+## 1. Prerequisites
 
 Ensure your system has:
 - Intel Arc GPU installed & detected
