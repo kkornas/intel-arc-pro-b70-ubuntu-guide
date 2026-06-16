@@ -8,7 +8,7 @@ This is the necessary configuration for the Ollama workload [docs/workloads/olla
 
 --- 
 
-## 1. Prerequisites
+## Prerequisites
 
 Ensure your system has:
 - Intel Arc GPU installed & detected
@@ -25,32 +25,35 @@ lsmod | grep -E "i915|xe"
 
 ---
 
-## 2. OpenCL & Level Zero Stack
+## OpenCL & Level Zero Stack
+
+After finishing this Guide your Setup will look like this:
+
 ```text
 Applications
 ├── Ollama / AI
 │   ├── OpenCL Runtime
-│   │   ├── intel-opencl-icd ✔
-│   │   └── ocl-icd-libopencl1 ✔
+│   │   ├── intel-opencl-icd 
+│   │   └── ocl-icd-libopencl1 
 │   │
 │   └── Level Zero Runtime (Compute API)
-│       ├── libze-intel-gpu1 ✔
-│       └── libze1 ✔
+│       ├── libze-intel-gpu1 
+│       └── libze1 
 │
 ├── Games / Rendering
 │   ├── OpenGL
-│   │   ├── mesa-utils ✔
-│   │   └── mesa-utils-bin ✔
+│   │   ├── mesa-utils 
+│   │   └── mesa-utils-bin 
 │   │
 │   └── Vulkan (opional, Verification only)
 │       └── vulkan-tools  
 │
 └── Video / Media Acceleration
     ├── VA-API Driver
-    │   └── intel-media-va-driver-non-free ✔
+    │   └── intel-media-va-driver-non-free 
     │
     └── VA-API Verification
-        └── vainfo ✔
+        └── vainfo 
 		
 		
 Developer / Tooling Layer (Intel oneAPI)
@@ -59,33 +62,33 @@ Developer / Tooling Layer (Intel oneAPI)
 │   └── oneAPI developer tooling (compiler, runtime utilities)
 
 Monitoring / Diagnostics Tools
-├── clinfo ✔
+├── clinfo 
 │   └── OpenCL platform & device inspection
 │
-├── intel-gpu-tools ✔
+├── intel-gpu-tools 
 │   └── low-level Intel GPU engine / counters
 │
-└── nvtop ✔
+└── nvtop 
     └── real-time GPU utilization + memory tracking
 
 
 Userspace Drivers / Runtime Libraries
 ├── Mesa Stack
-│   ├── mesa-utils ✔
-│   ├── mesa-utils-bin ✔
+│   ├── mesa-utils 
+│   ├── mesa-utils-bin 
 │   └── Vulkan/OpenGL userspace drivers (Mesa ANV / Intel driver stack)
 │
 ├── Intel Compute Runtime
-│   ├── intel-opencl-icd ✔
-│   ├── libze-intel-gpu1 ✔
-│   └── libze1 ✔
+│   ├── intel-opencl-icd 
+│   ├── libze-intel-gpu1 
+│   └── libze1 
 │
 └── VA-API Stack
-    └── intel-media-va-driver-non-free ✔
+    └── intel-media-va-driver-non-free 
 				↓
 Kernel Driver Layer
-├── i915 ✔
-└── xe ✔ (next-gen Intel GPU driver path)
+├── i915
+└── xe (next-gen Intel GPU driver path)
                 ↓
 Intel Arc GPU (BMG G31 / Pro B70)
 ```
@@ -114,9 +117,7 @@ sudo apt update && sudo apt install -y mesa-utils mesa-utils-bin ocl-icd-libopen
 ```
 
 
-### 3.1 Check PCI Devices (Hardware detected?)
-
-Is the Arc detected by PCIe Bus?
+### 3.1 Check PCIe Devices (Arc detected?)
 
 ```bash
 lspci -v | grep -i VGA
@@ -161,7 +162,6 @@ video                  77824  3 dell_wmi,xe,i915
 
 ### 3.3 Check OpenCL platform   (Compute-Test)
 
-
 ```bash
 clinfo | grep -E "Device Name|Driver Version"
 ```
@@ -179,7 +179,7 @@ Device Name                                     Intel(R) Arc(TM) Pro B70 Graphic
 
 Or
 
-**Expected Output (older Driver Version  25.31.034666):**
+**Expected Output (older Driver Version  25.31.034666 when i installed it):**
 ```
 Device Name 									Intel(R) Graphics [0xe223] 
   Driver Version                                  25.31.034666 
@@ -190,7 +190,7 @@ Device Name 									Intel(R) Graphics [0xe223]
     Device Name                                    Intel(R) Graphics [0xe223]
 ```
 
-**Note**:  [0xe223]" the card’s ID -> important identifier to detect the Arc in various outputs
+**Note**:  [0xe223] the card’s ID -> important identifier to detect the Arc in various outputs
 
 ### 3.4 Verify Level Zero Runtime Installation
 
@@ -223,20 +223,21 @@ ii  libze1:amd64                                             1.28.2-1~25.10~ppa1
 
 ### 3.4 Verfiy Level Zero with SYCL (final compute test)
 
-
 *Note* Level Zero runtime can be verified synthetically via sycl-ls (if intel-oneapi-base-toolkit installed) or functionally via a real workload such as Ollama (Docker-based) 
 If you struggle to install intel-oneapi-base-toolkit, continue with workload setup [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/02-ollama-dockered-oneapi.md). 
 
 The intel-oneapi-base-toolkit Requires a 2GB download spcae + tools: cmake, pkg-config, and build-essential.
 
-1. install tools
+*Note* Many guides incorrectly instruct you to install intel-oneapi-base-toolkit via apt -> in my case this package did not exist
+
+### a) install build tools
 
 ```bash
 sudo apt update
 sudo apt -y install cmake pkg-config build-essential
 
 ```
-2. Download intel-oneapi-base-toolkit
+### b) Download intel-oneapi-base-toolkit
 
 *Check latestes Version here https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneapi-toolkit-download.html?packages=oneapi-toolkit&oneapi-toolkit-os=linux&oneapi-lin=offline*
 
@@ -245,7 +246,7 @@ wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/71180075-e4e3-4
 sudo sh ./intel-oneapi-toolkit-2026.0.0.198_offline.sh -a --silent --cli --eula accept
 ```
 
-3. Install intel-oneapi-base-toolkit
+### c) Install intel-oneapi-base-toolkit
 
 ```bash
 sudo sh ./intel-oneapi-toolkit-2026.0.0.198_offline.sh -a --silent --cli --eula accept
@@ -270,7 +271,7 @@ Installation has successfully completed
 Remove extracted files: /home/milla/intel-oneapi-toolkit-2026.0.0.198_offline...
 ```
 
-4. Source
+### d) Source
 
 ```bash
 which cmake pkg-config make gcc g++  #verify the installation location,
@@ -298,7 +299,7 @@ source /opt/intel/oneapi/setvars.sh
 :: vtune -- latest
 :: oneAPI environment initialized ::
 ```
-3. SYCL Command
+### e) Run SYCL Command
 
 ```bash
 sycl-ls
@@ -314,18 +315,14 @@ sycl-ls
 ```
 
 
-*Note* Many guides incorrectly instruct you to install  intel-oneapi-base-toolkit via apt -> this package do not exist anymore"
-
-
 ### 3.5 Verfiy Level Zero with Ollama (dockered)
 
 -> [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/02-ollama-dockered-oneapi.md).
 
-*Note* Docker Images like the official intel image: "intelanalytics/ipex-llm-inference-cpp-xpu:latest" are delivered with SYCL / oneAPI component -> if the docker installation workload works sycl-ls is not requiered anymore.
+*Note* Docker Images like the official intel image: "intelanalytics/ipex-llm-inference-cpp-xpu:latest" are delivered with SYCL / oneAPI component -> if the docker workload works native sycl-ls installation is not requiered anymore.
 
 
-## 4. Package Overview
-
+## 4. Package Overview of what you installed
 
 ## OpenCL + Level Zero (Compute / AI)
 
@@ -371,7 +368,7 @@ ppa:kobuk-team/intel-graphics
 | Intel GPU Debug Tools | `intel-gpu-tools` |           `2.0-1` | Low-level GPU metrics |
 | GPU Monitoring            | `nvtop`           |         `3.2.0-1` | Real-time GPU utilization tracking |
 
-
+---
 
 ## Developer / Tooling Layer (Intel oneAPI)
 | Layer                     | Package           | Installed Version | Purpose                     |
@@ -381,8 +378,6 @@ ppa:kobuk-team/intel-graphics
 
 * oneAPI Base Toolkit Installed via offline installer (not apt) Installation steps-> [3.4 Verfiy Level Zero with SYCL (final compute test)]
 or https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneapi-toolkit-download.html?packages=oneapi-toolkit&oneapi-toolkit-os=linux&oneapi-lin=offline*
-
-
 
 ---
 
@@ -394,8 +389,6 @@ or https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneapi-toolkit
 | Intel GPU Kernel Driver *(newer kernels)* | `xe`      | next-generation Intel GPU driver |
 
 ---
-
-
 
 ## 5. Trouebelshooting and Monitoring
 
@@ -463,7 +456,7 @@ nvtop
  ```
 
 
-### 5.2 Verify Userspace Drivers (Mesa + Intel libs) via vulkan-tools 
+### 5.3 Verify Userspace Drivers (Mesa + Intel libs) via vulkan-tools 
 
 Vulkan tools help to verify Userspace Drivers (Mesa + Intel libs).
 
@@ -487,16 +480,14 @@ WARNING: [Loader Message] Code 0 : ICD for selected physical device does not exp
         deviceName        = llvmpipe (LLVM 20.1.8, 256 bits)
 ```
 
-### vkcube (Desktop oly)
+### 5.4 vkcube (Desktop oly)
 
 - will render a "visual cube" -> if this works are working  (Mesa + Intel libs)
 ```bash
 vkcube
 ```
 
-
-
-### 5.3 Verify VA-API -> Video API test
+### 5.5 Verify VA-API -> Video API test
 
 This checks if VA-API (Video Acceleration API) is working correctly.
 
@@ -504,8 +495,6 @@ This checks if VA-API (Video Acceleration API) is working correctly.
 sudo apt install vainfo
 vainfo
 ```
-
-
 
 **Expected Output:**
 
@@ -521,7 +510,7 @@ vainfo: Supported profile and entrypoints
       [...]
 ```
 
-### 5.5 Check OpenGL Renderer 
+### 5.6 Check OpenGL Renderer 
 
 This shows you which driver is currently used by your system.
 
@@ -544,7 +533,7 @@ OpenGL renderer string: Mesa Intel(R) Graphics (BMG G31)
 Error: unable to open display
 ```
 
-### 5.6 Check OpenCL Number of platforms" (first Line) 
+### 5.7 Check OpenCL Number of platforms" (first Line) 
 
 in my setup 2 iGPU UHD + Intel Arc
 
@@ -564,7 +553,7 @@ Number of platforms                               2
 [...]
 ```
 
-### 5. Things That Didn't Work 
+## 6. Things That Didn't Work 
 
 *   `sudo apt install intel-level-zero-gpu level-zero` 
 Note: The packages intel-level-zero-gpu and level-zero are not available in official Intel repositories or other standard repositories (as of Ubuntu 25.10). Many guides incorrectly instruct you to install them using sudo apt install intel-level-zero-gpu level-zero."
