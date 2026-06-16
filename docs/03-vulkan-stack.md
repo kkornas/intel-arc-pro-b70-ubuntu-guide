@@ -26,7 +26,7 @@ lsmod | grep -E "i915|xe"
 ## Vulkan Stack
 
 In this Guide you will install:
-
+```text
 Applications
 ├── AI / Inference
 │   └── llama.cpp									✔
@@ -75,7 +75,7 @@ Kernel Driver Layer
 └── xe (next-gen Intel GPU driver path)
                 ↓
 Intel Arc GPU (BMG G31 / Pro B70)
-
+```
 
 
 ## 1. Install vulkan
