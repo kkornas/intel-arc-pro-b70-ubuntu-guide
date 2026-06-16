@@ -3,17 +3,19 @@
 **Important:** Before proceeding, check the [README.md] file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide
 
 This guide explains how to setup  ** OpenCL & Level Zero  **. 
-This Setup is requiered for the ollama docerized workload [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/02-ollama-dockered-oneapi.md)
+
+This is the necessary configuration for the Ollama workload [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/02-ollama-dockered-oneapi.md)
 
 --- 
 
 # 1. Prerequisites
 
-[01-base-driver-setup.md] - Ensure your system has:
+Ensure your system has:
 - Intel Arc GPU installed & detected
 	- Check PCIe Devices for e.g. "Battlemage G31"
 	- Check Kernel module for "i915|xe"
-- Verify Basic Function e.g. DisplayPaort monitor works?
+	- Optional: Basic Funcion, Desktop mode via DisplayPort 
+Arc Driver  Guide: [01-base-driver-setup.md]
 
 Check:
 ```bash
