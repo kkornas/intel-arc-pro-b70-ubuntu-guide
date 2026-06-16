@@ -266,6 +266,7 @@ ppa:kobuk-team/intel-graphics
 | Intel GPU Debug Utilities | `clinfo`             |           `3.0.25.02.14-1` | OpenCL device enumeration |
 | Intel GPU Debug Tools | `intel-gpu-tools` |           `2.0-1` | Low-level GPU metrics |
 | GPU Monitoring            | `nvtop`           |         `3.2.0-1` | Real-time GPU utilization tracking |
+| Vulkan Device Inspection | `vulkan-tools` | `1.4.321.0-1` | Vulkan device enumeration (`vulkaninfo`) |
 ---
 
 ## LLM Runtime (llama.cpp)
@@ -276,7 +277,7 @@ ppa:kobuk-team/intel-graphics
 | GGUF Model Support            | built-in        | -                 | model format support |
 | Vulkan Backend (optional)     | compile flag     | enabled/disabled  | GPU acceleration via Vulkan |
 | OpenCL Backend (optional)     | compile flag     | enabled/disabled  | Intel GPU compute backend |
-* compiled from source. Installation steps-> [docs/llama-cpp-vulkan??.md][ ?? ] https://github.com/ggml-org/llama.cpp/releases/download/b9436/llama-b9436-bin-ubuntu-x64.tar.gz
+* compiled from source. Installation steps-> [docs/llama-cpp-vulkan.md] https://github.com/ggml-org/llama.cpp/releases/download/b9436/llama-b9436-bin-ubuntu-x64.tar.gz
 ---
 ## Developer / Tooling Layer (Intel oneAPI)
 | Layer                     | Package           | Installed Version | Purpose                     |
