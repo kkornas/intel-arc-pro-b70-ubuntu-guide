@@ -323,7 +323,7 @@ sycl-ls
 *Note* Docker Images like the official intel image: "intelanalytics/ipex-llm-inference-cpp-xpu:latest" are delivered with SYCL / oneAPI component -> if the docker workload works native sycl-ls installation is not requiered anymore.
 
 
-## 4. Package Overview of what you installed
+## 4. Package Overview 
 
 ## OpenCL + Level Zero (Compute / AI)
 
@@ -483,7 +483,7 @@ WARNING: [Loader Message] Code 0 : ICD for selected physical device does not exp
 
 ### 5.4 vkcube (Desktop oly)
 
-- will render a "visual cube" -> if this works are working  (Mesa + Intel libs)
+- will render a "visual cube" -> Mesa + Intel libs test
 ```bash
 vkcube
 ```
