@@ -14,8 +14,9 @@ Ensure your system has:
 - Intel Arc GPU installed & detected
 	- Check PCIe Devices for e.g. "Battlemage G31"
 	- Check Kernel module for "i915|xe"
-	- Optional: Basic Funcion, Desktop mode via DisplayPort 
-Arc Driver  Guide: [01-base-driver-setup.md]
+- Optional: Basic Funcion, Desktop mode via DisplayPort
+
+Arc Driver Guide: [01-base-driver-setup.md]
 
 Check:
 ```bash
@@ -27,61 +28,61 @@ lsmod | grep -E "i915|xe"
 
 ## OpenCL & Level Zero Stack
 
-After finishing this Guide your Setup will look like this:
+In this Guide you will install:
 
 ```text
 Applications
 ├── Ollama / AI
 │   ├── OpenCL Runtime
-│   │   ├── intel-opencl-icd 
-│   │   └── ocl-icd-libopencl1 
+│   │   ├── intel-opencl-icd  					✔
+│   │   └── ocl-icd-libopencl1  				✔
 │   │
 │   └── Level Zero Runtime (Compute API)
-│       ├── libze-intel-gpu1 
-│       └── libze1 
+│       ├── libze-intel-gpu1  					✔
+│       └── libze1  							✔
 │
 ├── Games / Rendering
 │   ├── OpenGL
-│   │   ├── mesa-utils 
-│   │   └── mesa-utils-bin 
+│   │   ├── mesa-utils  						✔
+│   │   └── mesa-utils-bin  					✔
 │   │
-│   └── Vulkan (opional, Verification only)
-│       └── vulkan-tools  
+│   └── Vulkan (Verification only)
+│       └── vulkan-tools   						-> opional
 │
 └── Video / Media Acceleration
-    ├── VA-API Driver
-    │   └── intel-media-va-driver-non-free 
+    ├── VA-API Driver 						
+    │   └── intel-media-va-driver-non-free  	✔					
     │
     └── VA-API Verification
-        └── vainfo 
+        └── vainfo  							✔
 		
 		
 Developer / Tooling Layer (Intel oneAPI)
-├── intel-oneapi-base-toolkit
+├── intel-oneapi-base-toolkit 					✔
 │   ├── sycl-ls (device enumeration over OpenCL + Level Zero)
 │   └── oneAPI developer tooling (compiler, runtime utilities)
 
 Monitoring / Diagnostics Tools
-├── clinfo 
+├── clinfo  									✔
 │   └── OpenCL platform & device inspection
 │
-├── intel-gpu-tools 
+├── intel-gpu-tools  							✔
 │   └── low-level Intel GPU engine / counters
 │
-└── nvtop 
+└── nvtop  										✔
     └── real-time GPU utilization + memory tracking
 
 
 Userspace Drivers / Runtime Libraries
-├── Mesa Stack
+├── Mesa Stack 									✔
 │   ├── mesa-utils 
 │   ├── mesa-utils-bin 
 │   └── Vulkan/OpenGL userspace drivers (Mesa ANV / Intel driver stack)
 │
 ├── Intel Compute Runtime
-│   ├── intel-opencl-icd 
-│   ├── libze-intel-gpu1 
-│   └── libze1 
+│   ├── intel-opencl-icd  						✔
+│   ├── libze-intel-gpu1  						✔
+│   └── libze1  								✔
 │
 └── VA-API Stack
     └── intel-media-va-driver-non-free 
