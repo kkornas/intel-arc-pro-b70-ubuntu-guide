@@ -151,7 +151,7 @@ ii  vulkan-tools                                             1.4.304.0+dfsg1-1  
 | Vulkan Verification Tools  | `vulkan-tools` | `1.4.304.0+dfsg1-1` | Verify Vulkan support (`vulkaninfo`, `vkcube`) |
 | GGUF Model Support            | built-in        | -                 | model format support |
 | AI Inference Backend       | `llama.cpp` (source build)* | `9436 (d6588daa8, gcc 11.4)` | LLM inference with Vulkan backend |
-* compiled from source. Installation steps-> [docs/llama-cpp-vulkan.md] -> https://github.com/ggml-org/llama.cpp/releases/download/b9436/llama-b9436-bin-ubuntu-x64.tar.gz
+* setup -> [docs/workloads/llama-cpp-vulkan.md]. compiled from source. Installation steps-> [docs/llama-cpp-vulkan.md] -> https://github.com/ggml-org/llama.cpp/releases/download/b9436/llama-b9436-bin-ubuntu-x64.tar.gz
 
 ---
 
