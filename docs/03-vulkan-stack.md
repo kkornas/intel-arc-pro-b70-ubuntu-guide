@@ -2,9 +2,7 @@
 
 **Important:** Before proceeding, check the [README.md] file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide
 
-This guide explains how to setup  ** Vulkan Driver **. 
-This Setup is requiered for llama.cpp workload [docs/workloads/llama-cpp-vulkan.md](docs/workloads/llama-cpp-vulkan.md])
-
+This guide explains how to setup the  ** Vulkan Driver ** for llama.cpp workload [docs/workloads/llama-cpp-vulkan.md](docs/workloads/llama-cpp-vulkan.md])
 --- 
 
 ## Prerequisites
@@ -25,11 +23,30 @@ lsmod | grep -E "i915|xe"
 
 ## Vulkan Stack
 
-In this Guide you will install:
+### Architecture Overview
+
+you will install ✔: 
+
+```text
+Application (AI / Inferenc / Game / Vulkan App)		-> [docs/workloads/llama-cpp-vulkan.md]
+              ↓
+libvulkan1 (Vulkan Loader, Userspace Runtime)		✔
+              ↓
+mesa-vulkan-drivers (Intel ANV Driver)				✔
+              ↓
+Kernel Driver (i915 / xe)							-> [docs/01-base-driver-setup.md]
+              ↓
+Intel Arc GPU
+```										
+
+### Full Stack
+
+In this Guide you will install (✔)
+
 ```text
 Applications
 ├── AI / Inference
-│   └── llama.cpp									✔
+│   └── llama.cpp									-> [docs/workloads/llama-cpp-vulkan.md]
 │       ├── Vulkan Backend (GGML_VULKAN=ON)			
 │       └── CPU Backend (fallback)					
 │
@@ -70,11 +87,12 @@ Userspace Drivers / Runtime Libraries
 └── VA-API Stack
     └── intel-media-va-driver-non-free 				✔
                 ↓
-Kernel Driver Layer
-├── i915 	
+Kernel Driver Layer									-> [docs/01-base-driver-setup.md]
+├── i915 											
 └── xe (next-gen Intel GPU driver path)
                 ↓
 Intel Arc GPU (BMG G31 / Pro B70)
+
 ```
 
 
