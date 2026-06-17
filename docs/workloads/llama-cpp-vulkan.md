@@ -2,7 +2,7 @@
 
 **Important:** Before proceeding, check the README.md file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide.
 
-This guide explains how to run **llama.cpp on Intel Arc GPUs** with **Vulkan driver **:
+This guide explains how to run **llama.cpp on Intel Arc GPUs** with **Vulkan driver**:
 
 It is based on a working Vulkan compute stack consisting of:
 - Intel Vulkan Driver (Mesa ANV)
@@ -13,7 +13,7 @@ Setup Guide here: [docs/03-vulkan-stack.md]
 
 --- 
 
-# Prerequisites
+## Prerequisites
 
 Ensure your system has:
 
@@ -110,12 +110,13 @@ ls -lh /data/ai/llama-cpp-models
 
 *Important* If multiple GPUs are present, select the Vulkan device to use, Typical values:
 
+```text
 | Value | Device          |
 | ----- | --------------- |
 | 0     | Intel Arc GPU   |
 | 1     | Intel UHD iGPU  |
 | 2+    | Additional GPUs |
-
+```
  
 Get device number with:
 ```bash
@@ -134,7 +135,12 @@ export GGML_VK_VISIBLE_DEVICES=0
 
 ### Start Server 
 ```bash
-./llama-server -m /data/ai/llama-cpp-models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf --host 127.0.0.1 --port 8082 -ngl 999 --ctx-size 16384 --jinja
+./llama-server -m /data/ai/llama-cpp-models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf \
+--host 127.0.0.1 \
+--port 8082 \
+-ngl 999 \
+--ctx-size 16384 \
+--jinja
 ```
 
 **Expected Output (similar, first 4 lines):**
@@ -276,7 +282,8 @@ Note: The Gemma and Qwen model is large and may require tens of gigabytes of dis
 
 ### Basic command
 
-llama-server -m /data/ai/llama-cpp-models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf --host 127.0.0.1 --port 8082 -ngl 999 --ctx-size 16384 --jinja
+llama-server -m /data/ai/llama-cpp-models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf \
+--host 127.0.0.1 \--port 8082 -ngl 999 --ctx-size 16384 --jinja
 
 ### Optimized command
 llama-server -m /data/ai/llama-cpp-models/gemma-4-26B-A4B-it-MXFP4_MOE.gguf --host 127.0.0.1 --port 8082 \
@@ -419,7 +426,7 @@ http://127.0.0.1:8082/v1
 API Key:
 dummy
 
-*Note* when using docker the URL may adapted to http://host.docker.internal:8082 depending on your syste and docker network settings!
+*Note* When using the Dockerized Open WebUI, the URL may change to http://host.docker.internal:8082, depending on your system and Docker network settings!
 
 
 # Systemd Service for Permanent Use (Optional)
