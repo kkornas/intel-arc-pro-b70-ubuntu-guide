@@ -1,6 +1,6 @@
 # Intel Arc B70 Ollama (Dockerized) Oneapi Guide
 
-**Important:** Before proceeding, check the README.md file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide.
+>**Important:** Before proceeding, check the README.md file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide.
 
 
 This guide explains how to run **Ollama on Intel Arc GPUs** using a Dockerized setup with **OpenCL + Level Zero support**:
@@ -14,7 +14,7 @@ It is based on a working Intel GPU compute stack consisting of:
 Setup Guide here: [docs/02-opencl-level-zero.md]
 
 ---
-# 1. Prerequisites
+## 1. Prerequisites
 
 Ensure your system has:
 
@@ -24,15 +24,13 @@ Ensure your system has:
 - Docker + Docker Compose installed
 
 
-# 2. Working Docker Image
+## 2. Working Docker Image
 
-## Tested and working image
-
+### Tested and working image
 ```
 uberchuckie/ollama-intel-gpu:latest
 ```
-
-### Characteristics:
+**Characteristics:**
 
 * Based on Intel IPEX / oneAPI stack
 * Includes OpenWebUI
@@ -40,9 +38,8 @@ uberchuckie/ollama-intel-gpu:latest
 * Ollama version: 0.9.3 (older but stable)
 * Works with Intel Arc + Level Zero + OpenCL
 
----
 
-## Docer Images that did NOT work in this setup
+**Docker Images that did notwork in this setup:**
 
 ```
 intelanalytics/ipex-llm-inference-cpp-xpu:latest (do not detect ARC over DRM device interface /dev/dri/* )
@@ -52,16 +49,14 @@ ollama/ollama:latest (no support for oneapi)
 ```
 
 
-# 3. Setup Directory
+## 3. Setup Directory
 
 ```bash
 mkdir -p ~/ollama-arc
 cd ~/ollama-arc
 ```
 
----
-
-# 4. Create docker-compose.yml in ~/ollama-arc
+## 4. Create docker-compose.yml in ~/ollama-arc
 
 ```yaml
 services:
@@ -109,13 +104,13 @@ volumes:
   openwebui:
 ```
 
-# 5. Start Containers
+## 5. Start Containers
 
 ```bash
 docker compose up -d
 ```
 
-* The initial run will download the image. If this fails, run docker compose pull and then docker compose up -d
+> The initial run will download the image. If this fails, run ``docker compose pull`` and then ``docker compose up -d``
 
 **Expected Output:**
 ```
@@ -125,9 +120,8 @@ docker compose up -d
  ✔ Container openwebui        Started      
 ```
 
----
 
-## If startup fails 
+### If startup fails 
 
 ```bash
 docker compose up -d
@@ -135,9 +129,9 @@ sleep 3
 docker compose up -d
 ```
 
----
 
-# 6. Convenience Alias
+
+## 6. Convenience Alias
 
 ```bash
 echo 'alias ollama="docker exec -it ollama-intel ollama"' >> ~/.bashrc
@@ -156,9 +150,8 @@ ollama --version
 ollama version is 0.9.3
 ```
 
----
 
-# 7. Verify Containers
+## 7. Verify Containers
 
 ```bash
 docker ps
@@ -169,10 +162,10 @@ Expected:
 * ollama-intel / uberchuckie/ollama-intel-gpu:lates 
 * openwebui / ghcr.io/open-webui/open-webui:main
 
----
+ 
 
 
-# 8. Download a Model
+## 8. Download a Model
 
 Recommended small test model: llama3.2:1b only 1.3 GB
 
@@ -192,9 +185,9 @@ NAME                           ID              SIZE      MODIFIED
 llama3.2:1b                    baf6a787fdff    1.3 GB    4 minutes ago
 ```
 
----
 
-# 9. Run Model
+
+## 9. Run Model
 
 ```bash
 ollama run llama3.2:1b
@@ -216,7 +209,7 @@ Can I help you with something else?
 CTRL+D to exit
 
 
-# 10. GPU Monitoring (optional)
+## 10. GPU Monitoring (optional)
 
 run in parallel
 
@@ -228,7 +221,7 @@ Chat with model, then you should see
 * increasing memory usage during inference
 
 
-*nvtop parallel with llama3.2:1b chat 
+**nvtop parallel with llama3.2:1b chat: **
 
 ```
 Device 0 [Battlemage G31 (Intel Graphics)]     PCIe GEN 3@16x RX: N/A TX: N/A
@@ -252,8 +245,8 @@ Device 0 [Battlemage G31 (Intel Graphics)]     PCIe GEN 3@16x RX: N/A TX: N/A
 
 F2Setup   F6Sort    F9Kill    F10Quit    F12Save Config
 ```
----
-# 11. Larger Model Test
+
+## 11. Larger Model Test
 
 For example gemma3:27b (17 GB ) which is a good compromise of speed and disk / vram usage 
 ```bash
@@ -286,7 +279,7 @@ F2Setup   F6Sort    F9Kill    F10Quit    F12Save Config
 
 ```
 
-# 12. Stop Docker 
+## 12. Stop Docker 
 
 ```bash
 docker compose down
@@ -298,9 +291,9 @@ docker compose down
  ✔ Container ollama-intel     Removed                                                                                                                                                   10.3s
  ✔ Network ollama-arc_default Removed      
 ```
----
 
-# 13. Architecture Overview
+
+## 13. Architecture Overview
 
 ```
 Ollama (Docker)
@@ -314,20 +307,16 @@ Kernel Driver (i915 / xe)
 Intel Arc GPU
 ```
 
----
 
 
-
-# 14. Key Notes
+## 14. Key Notes
 
 * Docker does NOT replace Level Zero or OpenCL
 * It only uses the host GPU stack
 * GPU access is provided via `/dev/dri`
 
----
 
-
-# 15. Optional Verification (inside container)
+## 15. Optional Verification (inside container)
 
 Verification tools depend on the container image.
 
@@ -368,7 +357,7 @@ This confirms:
 - Intel GPU runtime is accessible
 - Ollama uses the Arc GPU for inference
 
----
+
 
 ### Official Intel image (`intelanalytics/ipex-llm-inference-cpp-xpu:latest`)
 
@@ -397,7 +386,7 @@ Anyway.. because my drm is not working correctly intelanalytics/ipex-llm-inferen
 
 
 
-## Docker Compose Parameters Explained
+## 16. Docker Compose Parameters Explained
 
 Below is a short explanation of the most important parameters used in the `docker-compose.yml` 
 
