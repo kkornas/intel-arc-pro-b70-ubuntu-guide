@@ -1,15 +1,23 @@
+
 # Intel Arc B70 Base Driver Setup Guide
 
-**Important:** Before proceeding, check the README.md file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide
+> **Important:** Before proceeding, check the README.md file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide
 
-This shows the basic configuration for the Arc. After this, you should decide between 
-a) docs/02-aneapi-stack.md + docs/workloads/ollama-dockerized-oneapi.md
- or 
-b) docs/03-vulkan-stack.md + docs/workloads/??? 
+This guide shows the basic configuration for the Arc. After this setup, you should decide between 
 
-Setting up the Arc after installation is straightforward – basically, you just install the hardware, check out Bios for errors, the run apt update, and the magic happens.
+**a) OpenCL + Level Zero + Ollama (Dockerized)**
+- Install Driver 	  		-> [Intel Arc B70 OpenCL Level Zero Setup Guide](docs/02-aneapi-stack.md)
+- Install Workload	-> [Intel Arc B70 Ollama (Dockerized) Oneapi Guide](docs/workloads/ollama-dockerized-oneapi.md)
 
-**Disclaimer:** System configurations vary, and some commands may require adjustments for your specific hardware and software. Commands may fail due to system-specific differences,
+ 
+**b) Vulkan + llama.cpp**
+- Install Driver 			->  [Intel Arc B70 Vulkan Setup Guide](docs/03-vulkan-stack.md)
+- Install Workload	-> [Intel Arc B70 llama.cpp Vulkan Guide](docs/workloads/llama-cpp-vulkan.md)
+
+
+Setting up the Arc after installation is straightforward – basically, you install the hardware, check the BIOS for errors, run `apt update`, and it should work.
+
+> **Disclaimer:** System configurations vary, and some commands may require adjustments for your specific hardware and software. Commands may fail due to system-specific differences,
 Please read the Error messages - they provide valuable clues. 
 
 
@@ -24,13 +32,16 @@ sudo apt autoremove
 
 ## 2. Install New Card and Connect Display
 
-Install the Intel Arc graphics card. You can run the card headless (without connecting a DisplayPort cable), but some tools will not work. Just for the initial setup, I recommend connecting a DisplayPort cable
+- Install the Intel Arc graphics card
+- You can run the card headless (without connecting a DisplayPort cable), but some tools will not work.
+> For the initial setup, I recommend connecting a DisplayPort cable and a monitor
 ## 3. Open your Bios and Enable Resizable BAR (REBAR)
 
-Enable Resizable BAR (REBAR) in your system's BIOS settings.  This is important for optimal performance with the Arc card.
+Enable Resizable BAR (REBAR) in your system's BIOS settings.  
+>**REBAR** is important for optimal performance with the Arc card.
 
 
-## 4. Update System and Verify Driver Installation
+## 4. Update System (Base Installation)
 
 After updating your system and rebooting, the Intel Arc drivers *should* be automatically installed. In my case, this worked!
 
@@ -39,10 +50,11 @@ sudo apt update
 sudo apt full-upgrade
 sudo reboot
 ```
+## 5. Verify  
 
 Check if the card is recognized and the drivers are loaded. 
 
-### 4.1 Check PCI Devices -> Arc B70 is detected by PCIe Bus
+### 5.1 Check PCI Devices -> Arc B70 is detected by PCIe Bus
 
 ```bash
 lspci -v | grep -i VGA
@@ -55,9 +67,9 @@ lspci -v | grep -i VGA
 04:00.0 VGA compatible controller: Intel Corporation Battlemage G31 [Intel Graphics] (prog-if 00 [VGA controller])
 ```
 
-*(Note: This output shows both the integrated Intel UHD Graphics and the Intel Arc Battlemage G31.  Yours may vary).*
+>**Note:** This output shows both the integrated Intel UHD Graphics and the Intel Arc Battlemage G31.  Yours may vary.*
 
-### 4.2 Check Kernel module
+### 5.2 Check Kernel module
 
 This verifies the `i915` kernel module is loaded.
 
@@ -85,19 +97,38 @@ intel_vsec             24576  3 intel_pmc_ssram_telemetry,pmt_telemetry,xe
 video                  77824  3 dell_wmi,xe,i915
 ```
 
-### Verify Basic Function (Desktop Mode Only)
+### 5.3. Verify Basic Function (Desktop Mode Only)
+
 If you see the screen, it worked! :-)
 
 Optionally, you can run a benchmark or a simple stress test and monitor the load in nvtop.
 
-Terminal 1
+**Terminal 1**
 ```bash
 sudo apt nvtop
 nvtop
 ```
-Terminal 2
+**Terminal 2**
 ```bash
 
 sudo apt install stress-ng
 stress-ng --gpu 1 --timeout 30s
 ```
+
+## 6 Comment
+
+THAT'S IT- your system is ready for the next Steps:
+
+**a) OpenCL + Level Zero + Ollama (Dockerized)**
+- 1. Install Driver 	  		-> [Intel Arc B70 OpenCL Level Zero Setup Guide](docs/02-aneapi-stack.md)
+- 2. Install Workload	-> [Intel Arc B70 Ollama (Dockerized) Oneapi Guide](docs/workloads/ollama-dockerized-oneapi.md)
+
+or
+ 
+**b) Vulkan + llama.cpp**
+- 1. Install Driver 			->  [Intel Arc B70 Vulkan Setup Guide](docs/03-vulkan-stack.md)
+- 2. Install Workload	-> [Intel Arc B70 llama.cpp Vulkan Guide](docs/workloads/llama-cpp-vulkan.md)
+
+or
+
+**both!** ->  then, I recommend to start with **a) OpenCL + Level Zero + Ollama (Dockerized)**
