@@ -1,6 +1,6 @@
 # Intel Arc B70 llama.cpp Vulkan Guide
 
-**Important:** Before proceeding, check the README.md file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide.
+> **Important:** Before proceeding, check the README.md file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide.
 
 This guide explains how to run **llama.cpp on Intel Arc GPUs** with **Vulkan driver**:
 
@@ -9,9 +9,7 @@ It is based on a working Vulkan compute stack consisting of:
 - Vulkan Loader (Userspace Runtime)
 - vulkan-tools Diagnose-Tools (vulkaninfo, vkcube)
 
-Setup Guide here: [docs/03-vulkan-stack.md]
-
---- 
+Setup Guide here: [ntel Arc B70 Vulkan Setup Guide](docs/03-vulkan-stack.md)
 
 ## Prerequisites
 
@@ -22,7 +20,7 @@ Ensure your system has:
 - Vulkan stack installed
 - Verify Vulkan works
 
-Quick Check
+**Quick Check**
 	
 ```bash
 vulkaninfo | grep deviceName
@@ -37,25 +35,25 @@ WARNING: [Loader Message] Code 0 : ICD for selected physical device does not exp
         deviceName        = Intel(R) Graphics (RKL GT1)
         deviceName        = llvmpipe (LLVM 20.1.8, 256 bits)
 ```
----
 
-# Install llama.cpp (Prebuilt Binary) [Recommended]
 
-## 1. Create Application Directory
+## Install llama.cpp (Prebuilt Binary) [Recommended]
+
+### 1. Create Application Directory
 
 ```bash
 mkdir -p ~/apps
 cd ~/apps
 ```
 
-## 2. Download and install Release
+### 2. Download and install Release
 
 ```bash
 wget https://github.com/ggml-org/llama.cpp/releases/download/b9436/llama-b9436-bin-ubuntu-x64.tar.gz
 tar -xzvf llama-b9436-bin-ubuntu-x64.tar.gz
 mv llama-b9436 llama-cpp
 ```
-## 3. Verify Installation
+### 3. Verify Installation
 
 ```bash
 cd ~/apps/llama-cpp
@@ -68,7 +66,7 @@ version: 9436 (d6588daa8)
 built with GNU 11.4.0 for Linux x86_64
 ```
 
-## 4. Verify Vulkan Arc GPU is detected
+### 4. Verify Vulkan Arc GPU is detected
 ```bash
 ./llama-server --list-devices
 ```
@@ -80,9 +78,8 @@ Available devices:
   Vulkan1: Intel(R) Graphics (RKL GT1) (23414 MiB, 19465 MiB free)
 ```
 
-...
 
-## 5. Download Test Model
+### 5. Download Test Model
 
 ```bash
 mkdir -p /data/ai/llama-cpp-models
@@ -102,13 +99,10 @@ Verify model download
 ls -lh /data/ai/llama-cpp-models
 ```
 
-...
 
+### 6. Run First Model - running llama.cpp (Vulkan Backend)
 
-
-## 6. Run First Model - running llama.cpp (Vulkan Backend)
-
-*Important* If multiple GPUs are present, select the Vulkan device to use, Typical values:
+> **Important** If multiple GPUs are present, select the Vulkan device to use, Typical values:
 
 ```text
 | Value | Device          |
@@ -133,7 +127,7 @@ Get device number with:
 export GGML_VK_VISIBLE_DEVICES=0
 ```
 
-### Start Server 
+### 6.1 Start Server 
 ```bash
 ./llama-server -m /data/ai/llama-cpp-models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf \
 --host 127.0.0.1 \
@@ -156,9 +150,9 @@ The following line confirms that llama.cpp is using the Intel Arc GPU:
 - Vulkan0 : Intel(R) Graphics (BMG G31) (32656 MiB, 29063 MiB free)
 ```
 
-## 7.Verify 
+### 7. Verify 
 
-### 7.1 Run llama.cpp inference api in parallel shell
+#### 7.1 Run llama.cpp inference api in parallel shell
 
 ```bash
 curl http://127.0.0.1:8082/v1/chat/completions \
@@ -182,7 +176,7 @@ curl http://127.0.0.1:8082/v1/chat/completions \
 
 You will also notice Updates in the ./llama-server command output
 
-### 7.2 Show installed models
+#### 7.2 Show installed models
 
 ```bash
 curl http://127.0.0.1:8082/v1/models
@@ -192,7 +186,7 @@ curl http://127.0.0.1:8082/v1/models
 {"models":[{"name":"Qwen2.5-1.5B-Instruct-Q4_K_M.gguf","model":"Qwen2.5-1.5B-Instruct-Q4_K_M.gguf","modified_at":"","size":"","digest":"","type":"model","description":"","tags":[""],"capabilities":["completion"],"parameters":"","details":{"parent_model":"","format":"gguf","family":"","families":[""],"parameter_size":"","quantization_level":""}}],"object":"list","data":[{"id":"Qwen2.5-1.5B-Instruct-Q4_K_M.gguf","aliases":[],"tags":[],"object":"model","created":1781700575,"owned_by":"llamacpp","meta":{"vocab_type":2,"n_vocab":151936,"n_ctx":16384,"n_ctx_train":32768,"n_embd":1536,"n_params":1777088000,"size":1111370240}}]}
 ```
 
-### 7.3 Run GPU Monitoring in parallel shell (optional)
+#### 7.3 Run GPU Monitoring in parallel shell (optional)
 
 ```bash
 nvtop
@@ -227,7 +221,7 @@ F2Setup   F6Sort    F9Kill    F10Quit    F12Save Config
 
 
 
-## 8. Convenience Shortcut
+### 8. Convenience Shortcut
 
 ```bash
 sudo ln -sf ~/apps/llama-cpp/llama-server /usr/local/bin/llama-server
@@ -242,11 +236,11 @@ llama-server --version
 
 
 
-# Additional Information
+## Additional Information
 
-## Download Models
+### Download Models
 
-### Small Test Model 
+#### Small Test Model 
 
 (Qwen2.5-1.5B) ~ 1.1GB
 
@@ -259,7 +253,7 @@ wget -O Qwen2.5-1.5B-Instruct-Q4_K_M.gguf \
 https://huggingface.co/jc-builds/Qwen2.5-1.5B-Instruct-Q4_K_M-GGUF/resolve/main/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf?download=true
 ```
 
-### Larger Model 
+#### Larger Model 
 
 (Gemma 4 26B) ~ 16GB
 
@@ -276,16 +270,16 @@ https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/Qwen3-Coder-
 ```
 
 
-Note: The Gemma and Qwen model is large and may require tens of gigabytes of disk space.
+> Note: The Gemma and Qwen model is large and may require tens of gigabytes of disk space.
 
-## llama-server run command Parameters
+### llama-server run command Parameters
 
-### Basic command
+#### Basic command
 
 llama-server -m /data/ai/llama-cpp-models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf \
 --host 127.0.0.1 \--port 8082 -ngl 999 --ctx-size 16384 --jinja
 
-### Optimized command
+#### Optimized command
 llama-server -m /data/ai/llama-cpp-models/gemma-4-26B-A4B-it-MXFP4_MOE.gguf --host 127.0.0.1 --port 8082 \
 -ngl 999 \
 --ctx-size 8192 \
@@ -333,7 +327,7 @@ Tuning Notes
 		export GGML_VK_VISIBLE_DEVICES=0
 		```
 
-# Connecting llama.cpp to External Tools
+## Connecting llama.cpp to External Tools
 
 You can connect external Tools with the OpenAI-compatible API which is configured in the llama-server command:
 ```bash
@@ -357,7 +351,7 @@ curl http://127.0.0.1:8082/v1/chat/completions \
 ```
 -> if you successfully chat with you model the OpenAI-compatible API should work in external tools.
 
-## OpenClaw + llama.cpp
+### OpenClaw + llama.cpp
 
 Adapt your OpenClaw configuration file (for example`~/.openclaw/openclaw.json`)
 
@@ -407,7 +401,7 @@ And change the primary model!
   },
 ```
 
-## Open WebUI + llama.cpp
+### Open WebUI + llama.cpp
 
 Install Open WebUI using your preferred deployment method
 (for example Docker).
@@ -429,11 +423,11 @@ dummy
 *Note* When using the Dockerized Open WebUI, the URL may change to http://host.docker.internal:8082, depending on your system and Docker network settings!
 
 
-# Systemd Service for Permanent Use (Optional)
+## Systemd Service for Permanent Use (Optional)
 
 *Note* if you switch between Ollama and llama.cpp you have to disable the systemd service
 
-## 1. Create llama-server command script
+### 1. Create llama-server command script
 
 Create a script file for the Systemd Service. Adapt the llama-server command to your preferred configuration and model (do not forget to download it).
 
@@ -458,7 +452,9 @@ llama-server -m /data/ai/llama-cpp-models/gemma-4-26B-A4B-it-MXFP4_MOE.gguf --ho
 
 ```chmod +x ~/scripts/start-llama.sh```
 
-## 2. Create Systemd Service file: ```/etc/systemd/system/llama.service```
+### 2. Create Systemd Service file: 
+
+```/etc/systemd/system/llama.service```
 
 and add:
 
@@ -487,25 +483,25 @@ StandardError=journal
 WantedBy=multi-user.target
 ```
 
-## 3. Finish Systemd Setup
+### 3. Finish Systemd Setup
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable llama
 sudo systemctl start llama
 sudo systemctl status llama
 ```
-## 4. Stop
+### 4. Stop
 
-*Requiered when changing the llama-server command parameters in ```~/scripts/start-llama.sh```  
+>Requiered when changing the llama-server command parameters in ```~/scripts/start-llama.sh```  
 
 ```bash
 sudo systemctl stop llama
 sudo systemctl restart llama
 ```
 
-# Troubleshooting
+## Troubleshooting
 
-## Vulkan Device Not Found
+### Vulkan Device Not Found
 
 Verify Vulkan installation:
 
@@ -521,7 +517,7 @@ sudo apt install -y mesa-vulkan-drivers libvulkan-dev libvulkan1 vulkan-tools
 
 -> Full Guide here: [docs/03-vulkan-stack.md]
 
-### CPU Only Execution
+#### CPU Only Execution
 
 Check startup logs.
 
@@ -551,7 +547,7 @@ Select the Arc GPU:
 export GGML_VK_VISIBLE_DEVICES=0
 ```
 
-### Rebuild Cache
+#### Rebuild Cache
 
 Delete the build directory and rebuild:
 
@@ -569,7 +565,7 @@ cmake --build build -j
 
 ---
 
-# Optional: Build llama.cpp from Source
+## Optional: Build llama.cpp from Source
 
 *Note* I recommend starting with the prebuilt binary. My prebuilt binary installation was broken before I realized I had already built llama.cpp from source
 
@@ -580,7 +576,7 @@ Use this section if you want:
 * latest fixes not yet available in prebuilt releases
 
 
-## 1. Install Build Dependencies
+### 1. Install Build Dependencies
 
 ```bash
 sudo apt update
@@ -594,7 +590,7 @@ sudo apt install -y \
     glslang-tools
 ```
 
-## 2. Verify Vulkan Compiler (glslc)
+### 2. Verify Vulkan Compiler (glslc)
 
 Some Ubuntu releases may not provide a working `glslc` binary through `glslang-tools` and i had to download and install it!
 
@@ -633,7 +629,7 @@ source ~/.bashrc
 ```
 * source ~/.bashrc requieres a restart of your current session to take effect
 
-## 3. Clone Repository
+### 3. Clone Repository
 
 ```bash
 cd ~/apps
@@ -645,7 +641,7 @@ git clone https://github.com/ggml-org/llama.cpp.git
 cd llama.cpp
 ```
 
-## 4. Build with Vulkan
+### 4. Build with Vulkan
 
 ```bash
 rm -rf build
@@ -667,7 +663,7 @@ version: 9436 (d6588daa8)
 built with GNU 15.2.0 for Linux x86_64
 ```
 
-### 5.1 Verify Vulkan Device Detection
+#### 5.1 Verify Vulkan Device Detection
 
 ```bash
 ./build/bin/llama-server --list-devices
@@ -681,7 +677,7 @@ Available devices:
   Vulkan1: Intel(R) Graphics (RKL GT1)
 ```
 
-## 6. Create Symlink (Convenience Shortcut)
+### 6. Create Symlink (Convenience Shortcut)
 
 ```bash
 sudo ln -sf ~/apps/llama-cpp/build/bin/llama-server /usr/local/bin/llama-server
@@ -707,7 +703,6 @@ built with GNU 15.2.0 for Linux x86_64
 ```
 
 ---
-
 
 
 
