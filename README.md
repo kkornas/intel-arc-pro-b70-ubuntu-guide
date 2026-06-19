@@ -1,7 +1,15 @@
 # Intel Arc Pro B70 on Ubuntu
-A guide to setting up the Intel Arc Pro B70 graphics card on Ubuntu Linux. Let's unlock the potential of your Arc Pro!
 
-This repository documents:
+The Intel Arc Pro graphics card offers incredible potential on Linux, but the initial software setup can be complex. This guide is designed to simplify that process and help you unlock the full potential of your Arc. 
+
+It's also a living document, continuously updated with new information, workloads, and contributions from the community – a resource for anyone looking to get their Arc up and running smoothly.
+
+### Note
+> **This guide reflects a real-world working configuration. Different CPUs, motherboards, power supplies, Ubuntu versions, kernels, and Mesa versions may behave differently.**
+
+> **Intel Arc support on Linux evolves rapidly, so newer kernels and Mesa releases may improve stability and performance.**
+
+## Content Overview 
 
 - Intel Arc Pro B70 driver installation
 - Ubuntu kernel and Mesa requirements
@@ -10,14 +18,60 @@ This repository documents:
 - Validation and diagnostics
 - installation and setup of workloads llama-cpp, ollama, (openclaw, n8n, comfyui, whisper follwoing)
 
----
+## Table of Contents README.md
+1.  **Introduction**
+2.  **Quick Start / Where to Start**
+    -   Step 1. Intel Arc B70 Base Driver Setup Guide
+    -   Step 2. Driver & Workload
+        -   OpenCL + Level Zero + Ollama (Dockerized)
+        -   Vulkan + llama.cpp
+3.  **Tested Hardware**
+4.  **Operating System**
+5.  **Package Overview**
+    -   OpenCL + Level Zero (Compute / AI)
+    -   Graphics / Rendering
+    -   Video Acceleration (Media)
+    -   Monitoring / Debugging
+    -   LLM Runtime (llama.cpp)
+    -   Developer / Tooling Layer (Intel oneAPI)
+6.  **Final Stack**
+7.  **General Tips**
+    -   Hardware Setup
+    -   Disk Space
+    -   Driver and Workload Options
+8.  **Use Cases**
+    -   Vulkan
+    -   oneAPI / SYCL
+9.  **Coming Soon**
+10.  **Contributing**
+11.  **License**
+ 
+## 1. Quick Start / Where to Start
+
+### Step 1. Intel Arc B70 Base Driver Setup Guide
+
+-> (/docs/01-base-driver-setup.md)
+ 
+### Step 2. Driver & Workload 
+Decide between 
+``OpenCL + Level Zero + Ollama (Dockerized)``
+or 
+``Vulkan + llama.cpp`` 
+or
+``both`` 
+> check out chapter: 5. General Tips - Driver and Workload Options
+
+#### a) OpenCL + Level Zero + ollama dockerized
+Install Driver 	  		-> [Intel Arc B70 OpenCL Level Zero Setup Guide](docs/02-aneapi-stack.md)
+Install Workload	-> [Intel Arc B70 Ollama (Dockerized) Oneapi Guide](docs/workloads/ollama-dockerized-oneapi.md)
+
+ 
+#### b) Vulkan + llama.cpp
+Install Driver 			->  [Intel Arc B70 Vulkan Setup Guide](docs/03-vulkan-stack.md)
+Install Workload	-> [Intel Arc B70 llama.cpp Vulkan Guide](docs/workloads/llama-cpp-vulkan.md)
 
 
-## Tested Environment
-
-This guide was tested on the following hardware and software configuration.
-
-### Hardware
+## 2. Tested Hardware
 
 | Component   | Specification                   |
 | ----------- | ------------------------------- |
@@ -30,108 +84,87 @@ This guide was tested on the following hardware and software configuration.
 | Storage     | NVMe SSD M2 Slot                |
 | Cooling     | Stock Dell cooling              |
 
-### Software
+>Basically it's a Dell XPS 8940 + Arc B70
+
+
+## 3. Operating System
 
 | Component       | Version           |
 | --------------- | ----------------- |
 | OS              | Ubuntu 25.10 LTS  |
 | Kernel          | Linux 6.x 6.17.0-35-generic        |
 
-* For Mesa, Vulkan, oneAPI etc refer to Package Overview 
+## 4. Package Overview 
 
-### Notes
+Following Tables will show you the **complete Stack** for ``text Vulkan + llama.cpp`` & ``OpenCL + Level Zero + ollama dockerized``
 
-This guide reflects a real-world working configuration.
+### OpenCL + Level Zero (Compute / AI)
 
-Different CPUs, motherboards, power supplies, Ubuntu versions, kernels, and Mesa versions may behave differently.
+| Layer                             | Package              |            Installed Version | Purpose                     |
+| --------------------------------- | -------------------- | ---------------------------: | --------------------------- |
+| OpenCL Runtime                    | `intel-opencl-icd`   | `26.18.38308.1-1~25.10~ppa1` | Intel OpenCL GPU runtime    |
+| OpenCL Loader                     | `ocl-icd-libopencl1` |                    `2.3.3-1` | OpenCL ICD loader           |
+| Level Zero GPU Runtime            | `libze-intel-gpu1`   | `26.18.38308.1-1~25.10~ppa1` | Intel GPU backend           |
+| Level Zero Loader                 | `libze1`             |        `1.28.2-1~25.10~ppa1` | oneAPI Level Zero loader    |
+| Level Zero Dev Files              | `libze-dev`          |        `1.28.2-1~25.10~ppa1` | Development headers / debug |
+| OpenCL Diagnostic Tool            | `clinfo`             |             `3.0.25.02.14-1` | Verify OpenCL devices       |
 
-Intel Arc support on Linux evolves rapidly, so newer kernels and Mesa releases may improve stability and performance.
+ **Additional Repository required**:
+```bash id="repo"
+ppa:kobuk-team/intel-graphics
+```
+---
 
+### Graphics / Rendering
 
-### Hardware Installation
+| Layer                            | Package            | Installed Version | Purpose |
+| -------------------------------- | ------------------ | ----------------: | -------- |
+| OpenGL Tools                     | `mesa-utils`      | `9.0.0-2`         | `glxinfo`, `glxgears` |
+| OpenGL Helper Binaries           | `mesa-utils-bin`  | `9.0.0-2`         | additional Mesa utilities |
+| Vulkan Tools (verification only) | `vulkan-tools`    | `1.4.304.0+dfsg1-1` | `vulkaninfo`, `vkcube` | 
+| Vulkan Loader (Mesa / system)    | `libvulkan1`      | `1.4.321.0-1`   | Vulkan runtime loader |
+| Intel Vulkan Driver (Mesa ANV)   | `mesa-vulkan-drivers` | `25.2.8-0ubuntu0.25.10.2` | Intel Arc Vulkan backend |
+---
 
-Be sure your PSU can handle the 230 TDP!
+### Video Acceleration (Media)
 
-The card fits the Dell XPS 8940 case perfectly, but it requires modification of the front panel to accommodate the Arc Power Jack – you need to cut out a hole, which will be invisible when the front panel is installed. Alternatively, use one of these fancy 90-degree adapter from ebay.
+| Layer                  | Package                          |     Installed Version | Purpose                           |
+| ---------------------- | -------------------------------- | --------------------: | --------------------------------- |
+| VA-API Driver          | `intel-media-va-driver-non-free` | `26.2.0-1~25.10~ppa1` | Intel hardware video acceleration |
+| Video API Verification | `vainfo`                         | `2.23.0-1~25.10~ppa4` | Verify VA-API support             |
+---
 
-If you are using a similar setup, such as the Dell XPS 8940, I recommend installing additional fans or replacing the stock ones. A larger CPU cooler should be also on your list."
+### Monitoring / Debugging
 
-## Before you start
+| Layer                     | Package           | Installed Version | Purpose                     |
+| ------------------------- | ----------------- | ----------------: | --------------------------- |
+| Intel GPU Debug Utilities | `clinfo`             |           `3.0.25.02.14-1` | OpenCL device enumeration |
+| Intel GPU Debug Tools | `intel-gpu-tools` |           `2.0-1` | Low-level GPU metrics |
+| GPU Monitoring            | `nvtop`           |         `3.2.0-1` | Real-time GPU utilization tracking |
+| Vulkan Device Inspection | `vulkan-tools` | `1.4.321.0-1` | Vulkan device enumeration (`vulkaninfo`) |
+---
 
-*Important* Check your Disk Space & partitioning, especcially if you setup a brand new ubuntu!
+### LLM Runtime (llama.cpp)
 
+| Layer                          | Component        | Installed Version | Purpose |
+| ----------------------------- | ---------------- | ----------------: | -------- |
+| llama.cpp (source build)     | compiled from source | `9436 (d6588daa8, gcc 11.4)` | local LLM inference engine |
+| GGUF Model Support            | built-in        | -                 | model format support |
+| Vulkan Backend (optional)     | compile flag     | enabled/disabled  | GPU acceleration via Vulkan |
+| OpenCL Backend (optional)     | compile flag     | enabled/disabled  | Intel GPU compute backend |
+>  llama.cpp is compiled from source.  Installation steps described in [docs/llama-cpp-vulkan.md] 
+---
+### Developer / Tooling Layer (Intel oneAPI)
+| Layer                     | Package           | Installed Version | Purpose                     |
+| ------------------------- | ----------------- | ----------------: | --------------------------- |
+| oneAPI Base Toolkit (sycl-ls)*    | offline installer    |             `2026.0.0.198_` | to verify Level Zero with SYCL    |
+| SYCL Device Inspector     | oneAPI Base Toolkit (sycl-ls)    |             `2026.0.0.198_` | to verify Level Zero with SYCL    |
 
-- models and docker images can be very large, up to 30GB
-- necessary drivers and tools consume a significant amount of storage space
-- in my case
-Filesystem      Size  Used Avail Use%  Mounted on
-/dev/nvme0n1p1   43G     32G   10G   77% /
-/dev/nvme0n1p3   75G     30G   44G   41% /home
-/dev/nvme0n1p4  359G    329G   29G   92% /data
-	
-- The Problem: this setup led to a consistently full /home partition. Even after creating a /data/ai directory for large files and improved backups, 
-I underestimated the amount of space required in /home for things like apt package installations.Configuring this is annoying,
- but the biggest problem is that Docker downloads can fail due to low space, leaving behind hidden, temporary files in the containerd folder that
- you may not realize are there - and they are huge
- As a result, I had to move default locations like the Docker (especially the containerd folder) to the /data partition.
+> oneAPI Base Toolkit is installed via offline installer (not apt). Installation steps described in  [docs/02-opencl-level-zero.md]>  *3.4 Verify Level Zero with SYCL (final compute test)*
 
- A smaller home requires managing symbolic links and can cause compatibility issues with some tools, such as the Openclaw workspace!
- 
- *Recommendation:* Allocate at least 130GB to the /home partition."
-   
- 	
-## Where to start?
+##  5. Final Stack
 
-First Step: [Intel Arc B70 Base Driver Setup Guide](docs/01-base-driver-setup.md)
- 
-If you proceed with this guiede decide between:
-
-a) oneAPI + Ollama (Dockerized)
-b) Vulkan + llama.cpp
-
-There are other possible combinations, but I haven’t successfully tested them.
-
-**a) opencl level zero + oneAPI + Ollama (Dockerized)**
-
-*   **Steps:** docs/01-base-driver-setup.md + docs/02-opencl-level-zero.md + docs/workloads/02-ollama-dockered-oneapi.md
-*   **Pros:**
-    *   Easier to set up.
-    *   More optimized and stable than Vulkan 
-*   **Cons:**
-	* 	outdated model support > The official intel docker image/Custom Docker images do not support the latest models like e.g. gemma3 works, gemma4 not! 
-    *   Relies on a custom Docker image that works for me. Could not get the official Intel Ollama Docker image working with my setup.	Possible reasons: the iGPU or CPU models were selected instead of the Arc.
-
-* **Why Dockerized:** The official Ollama native installation does not currently support Intel Arc.
-
-
-
-
-**b) Vulkan + llama.cpp**
-
-*   **Steps:** docs/03-vulkan-stack.md + docs/workloads/03-llama-cpp-vulkan.md
-*   **Pros:**
-    *   You can run newer modles -> e.g. gemma4
-	*   When model is loaded in the Vram -> faster responses than ollama
-*   **Cons:**
-    *   More complex setup – requires tools like CMake and other build tools.
-    *   Less optimized and stable. 
-	*       Loading a model in the Vram took definetly more time than with ollama (same models tested) -> so if you want to switch models, oneapi is the way to go instead of vulkan
-	*       When Running my Setup starts to listen like a jet engine, and it didnt stop until i killed llama.cpp
-	
-
-**Other Possible Combinations**
-
-**Vulkan + Ollama (Dockerized)**
-*   I haven't been able to get Ollama to detect the Vulkan backend with this setup. I will try this and update the documentation.
-
-**Important Notes**
-Intel Arc support on Linux is evolving rapidly. Hopefully, we will soon get official native support for Ollama, and an updated official Intel Dockerized image.
-
-
-# Intel Arc Stack (Compute + Graphics + AI Workload)
-
-Full Stack after installing both Paths:  *Vulkan + llama.cpp & OpenCL + Level Zero + Ollama Oneapi*
-
+Following Tables will show you the **complete Stack** for ``Vulkan + llama.cpp`` & ``OpenCL + Level Zero + ollama dockerized``
 
 ```text
 Applications
@@ -217,79 +250,126 @@ Vulkan Stack (Graphics + Compute validation only)
 └── Mesa Intel Vulkan Driver (Mesa ANV)
     └── part of mesa userspace stack (already included above)
 ```
+
+## 6. General Tips 
+
+### Hardware Setup 
+
+#### Power Supply TDP
+> *Note: Be sure your PSU can handle the 230 TDP!*
+
+Dell XPS 500 W Platinum can handle it!
+
+### For a Dell XPS  Build? 
+* The card  perfectly fits in the Dell XPS 8940 case , but it requires modification of the front panel to accommodate the Arc Power Jack 
+* you need to cut out a hole, which will be invisible when the front panel is installed. 
+* Alternatively, use one of these fancy 90-degree adapter from ebay.
+
+#### Cooling 
+
+* If you are using a similar setup, such as the Dell XPS 8940, I recommend installing additional fans or replacing the stock ones. 
+* A larger CPU cooler should be also on your list 
+
+ 
+### Before you start: Check Disk Space
+
+> **Important: Check your Disk Space & partitioning, especially if you setup a brand new ubuntu! Driver, Tools, Models, Docker images can be very large!** 
+
+My partitioning:
+```text
+ 	Filesystem      Size  Used Avail Use%  Mounted on
+	/dev/nvme0n1p1   43G     32G   10G   77% /
+	/dev/nvme0n1p3   75G     30G   44G   41% /home
+	/dev/nvme0n1p4  359G    329G   29G   92% /data
+```	
+		  
+- This setup led to a consistently full `/home` partition. Even after creating a `/data/ai` directory for large files and improving backups
+- Do not  underestimated the amount of space required in `/home` for things like APT package installations
+- Docker downloads mya fail due to low space, leaving behind hidden, temporary files in the containerd folder that you might not realize are there – and they are huge
+- Yes you can "fix it" with symbolic links but it **may cause compatibility issues** with some tools, such as the Openclaw workspace
+- 
+ **Recommendation: Allocate at least 130GB to the `/home` partition.**
+ 	
+### Driver and Workload Options 
+After the base driver setup: [Intel Arc B70 Base Driver Setup Guide](docs/01-base-driver-setup.md)  you need to decide between:
+
+``OpenCL + Level Zero + Ollama (Dockerized)`` 
+vs.
+ ``Vulkan + llama.cpp`` 
+or
+``both`` in parallel - I recommend to start with **a) OpenCL + Level Zero + Ollama (Dockerized)**
+ 
+#### a) OpenCL + Level Zero + Ollama (Dockerized)
+- **Setup**:
+	1. Install Base: -> [Intel Arc B70 Base Driver Setup Guide](docs/01-base-driver-setup.md)
+	2.  Install Driver 	  		-> [Intel Arc B70 OpenCL Level Zero Setup Guide](docs/02-aneapi-stack.md)
+	3.  Install Workload	-> [Intel Arc B70 Ollama (Dockerized) Oneapi Guide](docs/workloads/ollama-dockerized-oneapi.md)
+
+*   **Pros:**
+    *   Easier to set up.
+    *   More optimized and stable than Vulkan 
+*   **Cons:**
+	* 	Outdated model support: The official Intel Docker image/custom Docker images do not support the latest models (e.g., Gemma 3, Gemma 4).
+    *   Relies on a custom Docker image that works for me.  I have been unable to get the official Intel Ollama Docker image working with my setup, possibly due to incorrect iGPU or CPU model selection.
+
+>   **Why Dockerized** * The official Ollama native installation currently does not support Intel Arc.
+ 
+#### b) Vulkan + llama.cpp
+- **Setup**:
+	1. Install Base: -> [Intel Arc B70 Base Driver Setup Guide](docs/01-base-driver-setup.md)
+	2. Install Driver 			->  [Intel Arc B70 Vulkan Setup Guide](docs/03-vulkan-stack.md)
+	3. Install Workload	-> [Intel Arc B70 llama.cpp Vulkan Guide](docs/workloads/llama-cpp-vulkan.md)
+
+*   **Pros:**
+    *   Supports newer models (e.g., Gemma 4).
+	*   Faster responses when the model is loaded in VRAM.
+*   **Cons:**
+    *   More complex setup – requires tools like CMake and other build tools.
+    *   Less optimized and stable. 
+	    * Loading a model into VRAM takes considerably more time than with Ollama Dockerized. If you frequently switch models, OneAPI is a better choice.
+    *   My system sometimes sounds like a jet engine after using LLM with llama.cpp.
 	
-	
-## 4. Package Overview 
+### Other Drivers and Workload Combinations 
 
-Full Stack after installing both Paths:  *Vulkan + llama.cpp & OpenCL + Level Zero + Ollama Oneapi*
+**Vulkan + Ollama (Dockerized)**
+*   I haven't been able to get Ollama to detect the Vulkan backend with this setup. I will try this and update the documentation.
 
-## OpenCL + Level Zero (Compute / AI)
+>**Important Notes**  Intel Arc support on Linux is evolving rapidly. Hopefully, we will soon get official native support for Ollama, and an updated official Intel Dockerized image.
 
-| Layer                             | Package              |            Installed Version | Purpose                     |
-| --------------------------------- | -------------------- | ---------------------------: | --------------------------- |
-| OpenCL Runtime                    | `intel-opencl-icd`   | `26.18.38308.1-1~25.10~ppa1` | Intel OpenCL GPU runtime    |
-| OpenCL Loader                     | `ocl-icd-libopencl1` |                    `2.3.3-1` | OpenCL ICD loader           |
-| Level Zero GPU Runtime            | `libze-intel-gpu1`   | `26.18.38308.1-1~25.10~ppa1` | Intel GPU backend           |
-| Level Zero Loader                 | `libze1`             |        `1.28.2-1~25.10~ppa1` | oneAPI Level Zero loader    |
-| Level Zero Dev Files              | `libze-dev`          |        `1.28.2-1~25.10~ppa1` | Development headers / debug |
-| OpenCL Diagnostic Tool            | `clinfo`             |             `3.0.25.02.14-1` | Verify OpenCL devices       |
 
- **Additional Repository required**:
-```bash id="repo"
-ppa:kobuk-team/intel-graphics
-```
----
+## 7. Use Cases
 
-## Graphics / Rendering
+### Vulkan
+- llama.cpp Vulkan backend
+- Ollama
+- Vulkan compute
+- AI inference
+- Multi-GPU inference
 
-| Layer                            | Package            | Installed Version | Purpose |
-| -------------------------------- | ------------------ | ----------------: | -------- |
-| OpenGL Tools                     | `mesa-utils`      | `9.0.0-2`         | `glxinfo`, `glxgears` |
-| OpenGL Helper Binaries           | `mesa-utils-bin`  | `9.0.0-2`         | additional Mesa utilities |
-| Vulkan Tools (verification only) | `vulkan-tools`    | `1.4.304.0+dfsg1-1` | `vulkaninfo`, `vkcube` | 
-| Vulkan Loader (Mesa / system)    | `libvulkan1`      | `1.4.321.0-1`   | Vulkan runtime loader |
-| Intel Vulkan Driver (Mesa ANV)   | `mesa-vulkan-drivers` | `25.2.8-0ubuntu0.25.10.2` | Intel Arc Vulkan backend |
----
+### oneAPI / SYCL
+- OpenVINO
+- Intel optimized AI workloads
+- SYCL compute
+- HPC workloads
+- Intel Extension for PyTorch
 
-## Video Acceleration (Media)
+## 8 Coming soon
 
-| Layer                  | Package                          |     Installed Version | Purpose                           |
-| ---------------------- | -------------------------------- | --------------------: | --------------------------------- |
-| VA-API Driver          | `intel-media-va-driver-non-free` | `26.2.0-1~25.10~ppa1` | Intel hardware video acceleration |
-| Video API Verification | `vainfo`                         | `2.23.0-1~25.10~ppa4` | Verify VA-API support             |
----
+**Currently undocumented**
+- Whisper TTS Setup & Config
+- CompfyUI Setup & Config
+- Openclaw Setup & Config
+- n8n Setup & Config
 
-## Monitoring / Debugging
 
-| Layer                     | Package           | Installed Version | Purpose                     |
-| ------------------------- | ----------------- | ----------------: | --------------------------- |
-| Intel GPU Debug Utilities | `clinfo`             |           `3.0.25.02.14-1` | OpenCL device enumeration |
-| Intel GPU Debug Tools | `intel-gpu-tools` |           `2.0-1` | Low-level GPU metrics |
-| GPU Monitoring            | `nvtop`           |         `3.2.0-1` | Real-time GPU utilization tracking |
-| Vulkan Device Inspection | `vulkan-tools` | `1.4.321.0-1` | Vulkan device enumeration (`vulkaninfo`) |
----
+## 9. Contributing
 
-## LLM Runtime (llama.cpp)
+Contributions are welcome.
 
-| Layer                          | Component        | Installed Version | Purpose |
-| ----------------------------- | ---------------- | ----------------: | -------- |
-| llama.cpp (source build)*     | compiled from source | `9436 (d6588daa8, gcc 11.4)` | local LLM inference engine |
-| GGUF Model Support            | built-in        | -                 | model format support |
-| Vulkan Backend (optional)     | compile flag     | enabled/disabled  | GPU acceleration via Vulkan |
-| OpenCL Backend (optional)     | compile flag     | enabled/disabled  | Intel GPU compute backend |
-* compiled from source. Installation steps-> [docs/llama-cpp-vulkan.md] https://github.com/ggml-org/llama.cpp/releases/download/b9436/llama-b9436-bin-ubuntu-x64.tar.gz
----
-## Developer / Tooling Layer (Intel oneAPI)
-| Layer                     | Package           | Installed Version | Purpose                     |
-| ------------------------- | ----------------- | ----------------: | --------------------------- |
-| oneAPI Base Toolkit (sycl-ls)*    | offline installer    |             `2026.0.0.198_` | to verify Level Zero with SYCL    |
-| SYCL Device Inspector     | oneAPI Base Toolkit (sycl-ls)    |             `2026.0.0.198_` | to verify Level Zero with SYCL    |
-
-* oneAPI Base Toolkit Installed via offline installer (not apt) Installation steps-> [docs/02-opencl-level-zero.md][3.4 Verfiy Level Zero with SYCL (final compute test)]
-or https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneapi-toolkit-download.html?packages=oneapi-toolkit&oneapi-toolkit-os=linux&oneapi-lin=offline*
+Please open an issue before large changes.
 
 ---
 
+## 10. License
 
-
-
+MIT License
