@@ -1,12 +1,10 @@
+
 # Intel Arc B70 OpenCL Level Zero Setup Guide
 
-**Important:** Before proceeding, check the [README.md] file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide
+>**Important:** Before proceeding, check the [README.md] file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide
 
-This guide explains how to setup  ** OpenCL & Level Zero  **. 
+This guide explains how to setup  ** OpenCL & Level Zero  **.  This is the necessary configuration for the Ollama workload [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/ollama-dockerized-oneapi.md)
 
-This is the necessary configuration for the Ollama workload [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/02-ollama-dockered-oneapi.md)
-
---- 
 
 ## Prerequisites
 
@@ -24,11 +22,10 @@ lspci -v | grep -i VGA
 lsmod | grep -E "i915|xe"
 ```
 
----
 
 ## OpenCL & Level Zero Stack
 
-In this Guide you will install:
+In this Guide you will install ( ✔ ) :
 
 ```text
 Applications
@@ -131,7 +128,7 @@ lspci -v | grep -i VGA
 04:00.0 VGA compatible controller: Intel Corporation Battlemage G31 [Intel Graphics] (prog-if 00 [VGA controller])
 ```
 
-*(Note: This output shows both the integrated Intel UHD Graphics and the Intel Arc Battlemage G31.  Yours may vary).*
+>*Note: This output shows both the integrated Intel UHD Graphics and the Intel Arc Battlemage G31.  Yours may vary.*
 
 ### 3.2 Check Kernel module `i915` is loaded
 
@@ -224,12 +221,12 @@ ii  libze1:amd64                                             1.28.2-1~25.10~ppa1
 
 ### 3.4 Verfiy Level Zero with SYCL (final compute test)
 
-*Note* Level Zero runtime can be verified synthetically via sycl-ls (if intel-oneapi-base-toolkit installed) or functionally via a real workload such as Ollama (Docker-based) 
+>*Note* Level Zero runtime can be verified synthetically via sycl-ls (if intel-oneapi-base-toolkit installed) or functionally via a real workload such as Ollama (Docker-based) 
 If you struggle to install intel-oneapi-base-toolkit, continue with workload setup [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/02-ollama-dockered-oneapi.md). 
 
 The intel-oneapi-base-toolkit Requires a 2GB download spcae + tools: cmake, pkg-config, and build-essential.
 
-*Note* Many guides incorrectly instruct you to install intel-oneapi-base-toolkit via apt -> in my case this package did not exist
+>*Note* Many guides incorrectly instruct you to install intel-oneapi-base-toolkit via apt -> in my case this package did not exist
 
 ### a) install build tools
 
@@ -320,7 +317,7 @@ sycl-ls
 
 -> [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/02-ollama-dockered-oneapi.md).
 
-*Note* Docker Images like the official intel image: "intelanalytics/ipex-llm-inference-cpp-xpu:latest" are delivered with SYCL / oneAPI component -> if the docker workload works native sycl-ls installation is not requiered anymore.
+> *Note* Docker Images like the official intel image: "intelanalytics/ipex-llm-inference-cpp-xpu:latest" are delivered with SYCL / oneAPI component -> if the docker workload works native sycl-ls installation is not requiered anymore.
 
 
 ## 4. Package Overview 
@@ -377,10 +374,8 @@ ppa:kobuk-team/intel-graphics
 | oneAPI Base Toolkit (sycl-ls)     | offline installer    |             `2026.0.0.198_` | to verify Level Zero with SYCL    |
 | SYCL Device Inspector     | oneAPI Base Toolkit (sycl-ls)    |             `2026.0.0.198_` | to verify Level Zero with SYCL    |
 
-* oneAPI Base Toolkit Installed via offline installer (not apt) Installation steps-> [3.4 Verfiy Level Zero with SYCL (final compute test)]
-or https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneapi-toolkit-download.html?packages=oneapi-toolkit&oneapi-toolkit-os=linux&oneapi-lin=offline*
+> oneAPI Base Toolkit is installed via offline installer (not apt). Installation steps-> [3.4 Verfiy Level Zero with SYCL (final compute test)] or https://www.intel.com/content/www/us/en/developer/tools/oneapi/oneapi-toolkit-download.html?packages=oneapi-toolkit&oneapi-toolkit-os=linux&oneapi-lin=offline*
 
----
 
 ## Kernel / Driver Layer
 
@@ -459,10 +454,7 @@ nvtop
 
 ### 5.3 Verify Userspace Drivers (Mesa + Intel libs) via vulkan-tools 
 
-Vulkan tools help to verify Userspace Drivers (Mesa + Intel libs).
-
-Yes it will install the Vulkan driver described here [docs/03-vulkan-stack.md].
-
+Vulkan tools help to verify Userspace Drivers (Mesa + Intel libs). Yes it will install the Vulkan driver described here [docs/03-vulkan-stack.md]  but not the Vulkan driver!
 
 ```bash
 sudo apt install vulkan-tools
@@ -574,5 +566,7 @@ intel-gpu-top: Intel Rocketlake (Gen12) @ /dev/dri/card1 -    0/   0 MHz;   0% R
 [...]
 ```
 
+## 7. Comment
 
+> Congratulations: Your system is ready to proceed with the Ollama workload [docs/workloads/ollama-dockered-oneapi.md](docs/workloads/ollama-dockerized-oneapi.md)
 
