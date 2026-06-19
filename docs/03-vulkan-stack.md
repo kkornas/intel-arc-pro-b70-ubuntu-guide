@@ -1,9 +1,8 @@
 # Intel Arc B70 Vulkan Setup Guide
 
-**Important:** Before proceeding, check the [README.md] file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide
+> **Important:** Before proceeding, check the [README.md] file for details on the specific Ubuntu distribution, kernel versions and other prerequisites used in this guide
 
-This guide explains how to setup the  ** Vulkan Driver ** for llama.cpp workload [docs/workloads/llama-cpp-vulkan.md](docs/workloads/llama-cpp-vulkan.md])
---- 
+This guide explains how to setup the  ** Vulkan Driver ** for llama.cpp workload [Intel Arc B70 llama.cpp Vulkan Guide](docs/workloads/llama-cpp-vulkan.md])
 
 ## Prerequisites
 
@@ -13,7 +12,7 @@ Ensure your system has:
 	- Check Kernel module for "i915|xe"
 - Optional: Basic Funcion, Desktop mode via DisplayPort
 
-Arc Driver Guide: [01-base-driver-setup.md]
+-> [Arc Driver Guide](docs/01-base-driver-setup.md)
 
 Check:
 ```bash
@@ -25,7 +24,7 @@ lsmod | grep -E "i915|xe"
 
 ### Architecture Overview
 
-you will install ✔: 
+In this Guide you will install (✔)
 
 ```text
 Application (AI / Inferenc / Game / Vulkan App)		-> [docs/workloads/llama-cpp-vulkan.md]
@@ -96,7 +95,7 @@ Intel Arc GPU (BMG G31 / Pro B70)
 ```
 
 
-## 1. Install vulkan
+## 1. Install Vulkan
 
 ```bash
 sudo apt update 
@@ -121,7 +120,7 @@ WARNING: [Loader Message] Code 0 : ICD for selected physical device does not exp
 
 ### 2.1 vkcube (Desktop oly)
 
-- will render a "visual cube" -> Mesa + Intel libs test
+> will render a "visual cube" -> Mesa + Intel libs test
 ```bash
 vkcube
 ```
@@ -150,9 +149,8 @@ ii  vulkan-tools                                             1.4.304.0+dfsg1-1  
 | Mesa Vulkan Driver         | `mesa-vulkan-drivers` | `25.2.8-0ubuntu0.25.10.2` | Intel Vulkan userspace driver (Mesa ANV) |
 | Vulkan Verification Tools  | `vulkan-tools` | `1.4.304.0+dfsg1-1` | Verify Vulkan support (`vulkaninfo`, `vkcube`) |
 | GGUF Model Support            | built-in        | -                 | model format support |
-| AI Inference Backend       | `llama.cpp` (source build)* | `9436 (d6588daa8, gcc 11.4)` | LLM inference with Vulkan backend |
-* setup -> [docs/workloads/llama-cpp-vulkan.md]. compiled from source. Installation steps-> [docs/llama-cpp-vulkan.md] -> https://github.com/ggml-org/llama.cpp/releases/download/b9436/llama-b9436-bin-ubuntu-x64.tar.gz
-
+| AI Inference Backend       | `llama.cpp` (source build) | `9436 (d6588daa8, gcc 11.4)` | LLM inference with Vulkan backend |
+> llama.cpp setup here -> [Intel Arc B70 llama.cpp Vulkan Guide](docs/workloads/llama-cpp-vulkan.md)
 ---
 
 ### Graphics / Rendering
@@ -193,7 +191,6 @@ ii  vulkan-tools                                             1.4.304.0+dfsg1-1  
 | llama.cpp Build System | `cmake` | `3.31.6-2ubuntu6` | Required to compile llama.cpp from source |
 | llama.cpp Build System | `build-essential` | `.12.12ubuntu1` | Required to compile llama.cpp from source |
 
-
 ---
 
 ### Kernel / Driver Layer
@@ -205,7 +202,7 @@ ii  vulkan-tools                                             1.4.304.0+dfsg1-1  
 
 ---
 
-### Installed Versions (Commands)
+## Installed Versions (Commands)
 
 Check installed package versions:
 
@@ -218,5 +215,4 @@ Check Vulkan runtime:
 ```bash
 apt policy libvulkan1 libvulkan-dev mesa-vulkan-drivers vulkan-tools
 ```
-
 
